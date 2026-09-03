@@ -1,15 +1,29 @@
 /**
  * API layer, domain types, Zod schemas and pure business helpers.
  *
- * Every network call goes through the Atoms web-sdk (`client.apiCall.invoke`)
- * against the `/api/v1/library/*` routes implemented in `app/backend`.
- * The backend is the single source of truth for roles, limits and fines - the
- * helpers below only mirror server rules to keep the UI honest.
+ * Every network call goes through a plain axios client against the
+ * `/api/v1/library/*` and `/api/v1/auth/*` routes implemented in
+ * LibraryBackend. The backend is the single source of truth for roles,
+ * limits and fines - the helpers below only mirror server rules to keep the
+ * UI honest.
  */
-import { createClient } from '@metagptx/web-sdk';
+import axios from 'axios';
 import { z } from 'zod';
+import { getAPIBaseURL } from './config';
+import { authApi, getToken, clearToken } from './auth';
 
-export const client = createClient();
+const http = axios.create({ withCredentials: false });
+
+/** Thin shim so existing call sites (`client.auth.toLogin()` etc.) keep working
+ *  while actually hitting the real backend instead of a platform-only SDK. */
+export const client = {
+  auth: {
+    toLogin: () => authApi.login(),
+    login: () => authApi.login(),
+    logout: () => authApi.logout(),
+    me: () => authApi.getCurrentUser(),
+  },
+};
 
 /* ------------------------------------------------------------------ types */
 
@@ -145,24 +159,39 @@ export function apiErrorCode(e: unknown): string {
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+const UNAUTHENTICATED_SESSION: Session = {
+  authenticated: false,
+  member: null,
+  needsRegistration: false,
+  activeBorrows: 0,
+  config: DEFAULT_CONFIG,
+};
+
 async function request<T>(url: string, method: Method, data: unknown = {}): Promise<T> {
-  const response = await client.apiCall.invoke({ url, method, data });
-  return response.data as T;
+  const token = getToken();
+  const response = await http.request<T>({
+    baseURL: getAPIBaseURL(),
+    url,
+    method,
+    params: method === 'GET' ? data : undefined,
+    data: method === 'GET' ? undefined : data,
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  return response.data;
 }
 
 export const api = {
   session: async (): Promise<Session> => {
-    const me = await client.auth.me().catch(() => null);
-    if (!me?.data) {
-      return {
-        authenticated: false,
-        member: null,
-        needsRegistration: false,
-        activeBorrows: 0,
-        config: DEFAULT_CONFIG,
-      };
+    if (!getToken()) return UNAUTHENTICATED_SESSION;
+    try {
+      return await request<Session>('/api/v1/library/session', 'GET');
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response?.status === 401) {
+        clearToken();
+        return UNAUTHENTICATED_SESSION;
+      }
+      throw e;
     }
-    return request<Session>('/api/v1/library/session', 'GET');
   },
 
   selfRegister: (data: RegistrationInput) =>

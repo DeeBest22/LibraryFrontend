@@ -8,7 +8,7 @@ const CAPABILITIES = [
   {
     icon: Search,
     title: 'Search the whole catalogue',
-    body: 'Look up any holding by title, author, accession number, ISBN, publisher or subject — and see live copy availability before you walk to the shelf.',
+    body: 'Look up any holding by title, author, accession number, ISBN, publisher or subject, then see live copy availability before you walk to the shelf.',
   },
   {
     icon: CalendarClock,
@@ -27,6 +27,15 @@ const CAPABILITIES = [
   },
 ];
 
+function SectionRule() {
+  return (
+    <div className="mt-4 flex flex-col gap-[3px]" aria-hidden="true">
+      <div className="h-px w-14 bg-border" />
+      <div className="h-px w-14 bg-border" />
+    </div>
+  );
+}
+
 export default function Index() {
   const { data: session } = useSession();
   const member = session?.member;
@@ -37,20 +46,28 @@ export default function Index() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero — asymmetric 3/2 split, single dominant idea */}
-        <section className="border-b border-border bg-secondary/40">
-          <div className="mx-auto grid max-w-screen-xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-5 lg:gap-16 lg:px-8 lg:py-24">
+        {/* Hero: an asymmetric split pairing the pitch with a ledger-tab index card */}
+        <section className="relative overflow-hidden border-b border-border bg-secondary/40">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.4]"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(to bottom, hsl(var(--border)) 0, hsl(var(--border)) 1px, transparent 1px, transparent 44px)',
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto grid max-w-screen-xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-5 lg:gap-16 lg:px-8 lg:py-24">
             <div className="lg:col-span-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                University of Jos · Main Library
-              </p>
-              <h1 className="mt-4 font-display text-4xl font-bold leading-[1.1] sm:text-5xl lg:text-6xl">
+              <span className="inline-block border border-primary/30 bg-background px-3 py-1 text-sm italic text-muted-foreground">
+                University of Jos, Main Library
+              </span>
+              <h1 className="mt-5 font-display text-4xl font-bold leading-[1.1] sm:text-5xl lg:text-6xl">
                 The accession register,
                 <br />
                 now open all night.
               </h1>
               <p className="mt-6 max-w-prose text-base leading-relaxed text-muted-foreground">
-                Cataloguing, circulation, membership and reporting for the University of Jos library —
+                Cataloguing, circulation, membership and reporting for the University of Jos library,
                 one record for every book, one account for every reader, no paper logbooks.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -77,56 +94,60 @@ export default function Index() {
               </div>
               <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-6">
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-muted-foreground">Loan period</dt>
+                  <dt className="text-sm italic text-muted-foreground">Loan period</dt>
                   <dd className="mt-1 font-display text-2xl font-bold tnum">14 days</dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-muted-foreground">Books at once</dt>
+                  <dt className="text-sm italic text-muted-foreground">Books at once</dt>
                   <dd className="mt-1 font-display text-2xl font-bold tnum">3</dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-muted-foreground">Late fine</dt>
+                  <dt className="text-sm italic text-muted-foreground">Late fine</dt>
                   <dd className="mt-1 font-display text-2xl font-bold tnum">₦50/day</dd>
                 </div>
               </dl>
             </div>
 
             <div className="lg:col-span-2">
-              <div className="h-full rounded-lg border border-border bg-card p-6">
-                <div className="flex items-center gap-2 text-primary">
-                  <Library className="h-5 w-5" aria-hidden="true" />
-                  <h2 className="text-sm font-semibold uppercase tracking-wider">Who uses it</h2>
+              <div className="relative">
+                <div className="absolute -top-3 left-6 h-3 w-24 bg-primary" aria-hidden="true" />
+                <div className="h-full border border-border bg-card p-6 pt-7">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Library className="h-5 w-5" aria-hidden="true" />
+                    <h2 className="font-display text-lg font-semibold">Who uses it</h2>
+                  </div>
+                  <ul className="mt-5 divide-y divide-border text-sm">
+                    <li className="py-4">
+                      <p className="font-semibold">Students &amp; staff</p>
+                      <p className="mt-1 text-muted-foreground">
+                        Search holdings, borrow up to three titles, track due dates and see your full
+                        borrowing history.
+                      </p>
+                    </li>
+                    <li className="py-4">
+                      <p className="font-semibold">Librarians</p>
+                      <p className="mt-1 text-muted-foreground">
+                        Catalogue new accessions, approve registrations, issue and receive books on
+                        behalf of readers, and export reports.
+                      </p>
+                    </li>
+                    <li className="pt-4">
+                      <p className="font-semibold">Visitors</p>
+                      <p className="mt-1 text-muted-foreground">
+                        Browse this page and the about page. Borrowing requires an approved membership.
+                      </p>
+                    </li>
+                  </ul>
                 </div>
-                <ul className="mt-5 divide-y divide-border text-sm">
-                  <li className="py-4">
-                    <p className="font-semibold">Students &amp; staff</p>
-                    <p className="mt-1 text-muted-foreground">
-                      Search holdings, borrow up to three titles, track due dates and see your full
-                      borrowing history.
-                    </p>
-                  </li>
-                  <li className="py-4">
-                    <p className="font-semibold">Librarians</p>
-                    <p className="mt-1 text-muted-foreground">
-                      Catalogue new accessions, approve registrations, issue and receive books on behalf
-                      of readers, and export reports.
-                    </p>
-                  </li>
-                  <li className="pt-4">
-                    <p className="font-semibold">Visitors</p>
-                    <p className="mt-1 text-muted-foreground">
-                      Browse this page and the about page. Borrowing requires an approved membership.
-                    </p>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Capabilities — varied two-column rows, not identical cards */}
+        {/* Capabilities: icon-led rows, not identical cards */}
         <section className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="font-display text-3xl">What the system does</h2>
+          <SectionRule />
           <div className="mt-8 grid gap-x-12 gap-y-10 sm:grid-cols-2">
             {CAPABILITIES.map(({ icon: Icon, title, body }) => (
               <div key={title} className="flex gap-4">

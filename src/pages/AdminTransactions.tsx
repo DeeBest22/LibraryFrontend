@@ -242,7 +242,7 @@ function AdminTransactionsBody() {
           description={
             submitted || status !== 'ALL'
               ? 'Clear the search term or choose "All records" to see the full circulation history.'
-              : 'Once a book is issued — here or by a member from the catalogue — the transaction appears in this list.'
+              : 'Once a book is issued  here or by a member from the catalogue  the transaction appears in this list.'
           }
           action={
             status === 'ALL' && !submitted ? (
@@ -305,7 +305,7 @@ function AdminTransactionsBody() {
                   <TableCell
                     className={`text-right tnum ${txn.fineAmount > 0 ? 'font-medium text-destructive' : 'text-muted-foreground'}`}
                   >
-                    {txn.fineAmount > 0 ? formatNaira(txn.fineAmount) : '—'}
+                    {txn.fineAmount > 0 ? formatNaira(txn.fineAmount) : ''}
                   </TableCell>
                   <TableCell className="text-right">
                     {txn.returnDate ? (

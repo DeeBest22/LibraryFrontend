@@ -16,6 +16,7 @@ import AdminReports from './pages/AdminReports';
 import NotFound from './pages/NotFound';
 import AuthCallback from './pages/AuthCallback';
 import AuthError from './pages/AuthError';
+import LogoutCallbackPage from './pages/LogoutCallbackPage';
 // MODULE_IMPORTS_START
 // MODULE_IMPORTS_END
 
@@ -44,6 +45,7 @@ const AppRoutes = () => (
 
     <Route path="/auth/callback" element={<AuthCallback />} />
     <Route path="/auth/error" element={<AuthError />} />
+    <Route path="/logout-callback" element={<LogoutCallbackPage />} />
     {/* MODULE_ROUTES_START */}
     {/* MODULE_ROUTES_END */}
     <Route path="*" element={<NotFound />} />
