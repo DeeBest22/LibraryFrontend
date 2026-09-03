@@ -7,54 +7,54 @@
 /*
  * University of Jos Library Management System - design tokens.
  * Register: Product (task-oriented, authenticated tooling).
- * Strategy: Restrained - sand-tinted neutrals (hue 38) with a single deep
- * pine primary (hue 168). No default slate anywhere.
+ * Strategy: Restrained - cool blue-tinted neutrals (hue 213) with a single
+ * deep blue primary (hue 221). No default slate anywhere.
  */
 @layer base {
   :root {
-    --background: 38 30% 97%;
-    --foreground: 172 24% 13%;
+    --background: 213 30% 97%;
+    --foreground: 222 30% 13%;
 
-    --card: 38 42% 99%;
-    --card-foreground: 172 24% 13%;
+    --card: 213 42% 99%;
+    --card-foreground: 222 30% 13%;
 
-    --popover: 38 42% 99%;
-    --popover-foreground: 172 24% 13%;
+    --popover: 213 42% 99%;
+    --popover-foreground: 222 30% 13%;
 
-    --primary: 168 52% 23%;
-    --primary-foreground: 42 56% 97%;
+    --primary: 221 70% 34%;
+    --primary-foreground: 213 46% 97%;
 
-    --secondary: 38 22% 92%;
-    --secondary-foreground: 170 30% 18%;
+    --secondary: 213 22% 92%;
+    --secondary-foreground: 222 30% 18%;
 
-    --muted: 38 20% 93%;
-    --muted-foreground: 172 11% 41%;
+    --muted: 213 20% 93%;
+    --muted-foreground: 215 11% 41%;
 
-    --accent: 168 28% 90%;
-    --accent-foreground: 168 52% 20%;
+    --accent: 217 40% 90%;
+    --accent-foreground: 221 70% 28%;
 
     --destructive: 4 66% 44%;
-    --destructive-foreground: 42 56% 97%;
+    --destructive-foreground: 213 46% 97%;
 
     --warning: 34 84% 44%;
     --success: 152 48% 32%;
 
-    --border: 38 18% 86%;
-    --input: 38 18% 86%;
-    --ring: 168 48% 30%;
+    --border: 213 18% 86%;
+    --input: 213 18% 86%;
+    --ring: 221 65% 40%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 40 24% 94%;
-    --sidebar-foreground: 172 24% 16%;
-    --sidebar-primary: 168 52% 23%;
-    --sidebar-primary-foreground: 42 56% 97%;
-    --sidebar-accent: 38 26% 89%;
-    --sidebar-accent-foreground: 168 52% 20%;
-    --sidebar-border: 38 18% 84%;
-    --sidebar-ring: 168 48% 30%;
+    --sidebar-background: 214 24% 94%;
+    --sidebar-foreground: 222 30% 16%;
+    --sidebar-primary: 221 70% 34%;
+    --sidebar-primary-foreground: 213 46% 97%;
+    --sidebar-accent: 214 26% 89%;
+    --sidebar-accent-foreground: 221 70% 28%;
+    --sidebar-border: 214 18% 84%;
+    --sidebar-ring: 221 65% 40%;
 
-    --chart-1: 168 52% 28%;
+    --chart-1: 221 70% 40%;
     --chart-2: 34 78% 48%;
     --chart-3: 196 44% 36%;
     --chart-4: 12 58% 48%;
@@ -62,45 +62,45 @@
   }
 
   .dark {
-    --background: 172 22% 9%;
-    --foreground: 40 26% 92%;
+    --background: 222 26% 9%;
+    --foreground: 213 26% 92%;
 
-    --card: 172 20% 12%;
-    --card-foreground: 40 26% 92%;
+    --card: 222 24% 12%;
+    --card-foreground: 213 26% 92%;
 
-    --popover: 172 20% 12%;
-    --popover-foreground: 40 26% 92%;
+    --popover: 222 24% 12%;
+    --popover-foreground: 213 26% 92%;
 
-    --primary: 166 44% 52%;
-    --primary-foreground: 172 30% 10%;
+    --primary: 217 78% 62%;
+    --primary-foreground: 222 34% 10%;
 
-    --secondary: 172 16% 16%;
-    --secondary-foreground: 40 24% 90%;
+    --secondary: 222 16% 16%;
+    --secondary-foreground: 213 24% 90%;
 
-    --muted: 172 14% 16%;
-    --muted-foreground: 40 12% 66%;
+    --muted: 222 14% 16%;
+    --muted-foreground: 214 12% 66%;
 
-    --accent: 168 22% 20%;
-    --accent-foreground: 166 44% 76%;
+    --accent: 217 30% 20%;
+    --accent-foreground: 217 78% 76%;
 
     --destructive: 4 56% 50%;
-    --destructive-foreground: 40 26% 94%;
+    --destructive-foreground: 213 26% 94%;
 
     --warning: 34 72% 56%;
     --success: 152 40% 52%;
 
-    --border: 172 14% 20%;
-    --input: 172 14% 20%;
-    --ring: 166 44% 46%;
+    --border: 222 14% 20%;
+    --input: 222 14% 20%;
+    --ring: 217 70% 54%;
 
-    --sidebar-background: 172 22% 11%;
-    --sidebar-foreground: 40 24% 90%;
-    --sidebar-primary: 166 44% 52%;
-    --sidebar-primary-foreground: 172 30% 10%;
-    --sidebar-accent: 172 16% 17%;
-    --sidebar-accent-foreground: 166 44% 76%;
-    --sidebar-border: 172 14% 20%;
-    --sidebar-ring: 166 44% 46%;
+    --sidebar-background: 222 26% 11%;
+    --sidebar-foreground: 213 24% 90%;
+    --sidebar-primary: 217 78% 62%;
+    --sidebar-primary-foreground: 222 34% 10%;
+    --sidebar-accent: 222 16% 17%;
+    --sidebar-accent-foreground: 217 78% 76%;
+    --sidebar-border: 222 14% 20%;
+    --sidebar-ring: 217 70% 54%;
   }
 }
 
