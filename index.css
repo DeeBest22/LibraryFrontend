@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Petrona:ital,wght@0,500;0,600;0,700;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * University of Jos Library Management System - design tokens.
+ * Register: Product (task-oriented, authenticated tooling).
+ * Strategy: Restrained - cool blue-tinted neutrals (hue 213) with a single
+ * deep blue primary (hue 221). No default slate anywhere.
+ */
+@layer base {
+  :root {
+    --background: 213 30% 97%;
+    --foreground: 222 30% 13%;
+
+    --card: 213 42% 99%;
+    --card-foreground: 222 30% 13%;
+
+    --popover: 213 42% 99%;
+    --popover-foreground: 222 30% 13%;
+
+    --primary: 221 70% 34%;
+    --primary-foreground: 213 46% 97%;
+
+    --secondary: 213 22% 92%;
+    --secondary-foreground: 222 30% 18%;
+
+    --muted: 213 20% 93%;
+    --muted-foreground: 215 11% 41%;
+
+    --accent: 217 40% 90%;
+    --accent-foreground: 221 70% 28%;
+
+    --destructive: 4 66% 44%;
+    --destructive-foreground: 213 46% 97%;
+
+    --warning: 34 84% 44%;
+    --success: 152 48% 32%;
+
+    --border: 213 18% 86%;
+    --input: 213 18% 86%;
+    --ring: 221 65% 40%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 214 24% 94%;
+    --sidebar-foreground: 222 30% 16%;
+    --sidebar-primary: 221 70% 34%;
+    --sidebar-primary-foreground: 213 46% 97%;
+    --sidebar-accent: 214 26% 89%;
+    --sidebar-accent-foreground: 221 70% 28%;
+    --sidebar-border: 214 18% 84%;
+    --sidebar-ring: 221 65% 40%;
+
+    --chart-1: 221 70% 40%;
+    --chart-2: 34 78% 48%;
+    --chart-3: 196 44% 36%;
+    --chart-4: 12 58% 48%;
+    --chart-5: 258 30% 46%;
+  }
+
+  .dark {
+    --background: 222 26% 9%;
+    --foreground: 213 26% 92%;
+
+    --card: 222 24% 12%;
+    --card-foreground: 213 26% 92%;
+
+    --popover: 222 24% 12%;
+    --popover-foreground: 213 26% 92%;
+
+    --primary: 217 78% 62%;
+    --primary-foreground: 222 34% 10%;
+
+    --secondary: 222 16% 16%;
+    --secondary-foreground: 213 24% 90%;
+
+    --muted: 222 14% 16%;
+    --muted-foreground: 214 12% 66%;
+
+    --accent: 217 30% 20%;
+    --accent-foreground: 217 78% 76%;
+
+    --destructive: 4 56% 50%;
+    --destructive-foreground: 213 26% 94%;
+
+    --warning: 34 72% 56%;
+    --success: 152 40% 52%;
+
+    --border: 222 14% 20%;
+    --input: 222 14% 20%;
+    --ring: 217 70% 54%;
+
+    --sidebar-background: 222 26% 11%;
+    --sidebar-foreground: 213 24% 90%;
+    --sidebar-primary: 217 78% 62%;
+    --sidebar-primary-foreground: 222 34% 10%;
+    --sidebar-accent: 222 16% 17%;
+    --sidebar-accent-foreground: 217 78% 76%;
+    --sidebar-border: 222 14% 20%;
+    --sidebar-ring: 217 70% 54%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-kerning: normal;
+    text-wrap: pretty;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    @apply text-3xl font-bold leading-tight tracking-tight;
+    text-wrap: balance;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold leading-snug;
+    text-wrap: balance;
+  }
+
+  h3 {
+    @apply text-lg font-semibold;
+  }
+
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Petrona', ui-serif, Georgia, serif;
+    font-feature-settings: 'liga' 1;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .rule-grid {
+    background-image: linear-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 100% 2.25rem;
+  }
+}
