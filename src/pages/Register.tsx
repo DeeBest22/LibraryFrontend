@@ -7,10 +7,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CheckCircle2, Clock, Loader2, UserPlus } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -33,6 +32,9 @@ import {
   RegistrationInput,
   saveRegistrationDraft,
 } from '@/lib/api';
+
+const STEPS = ['Submitted', 'Librarian review', 'Approved to borrow'];
+const fieldClass = 'h-11';
 
 export default function Register() {
   const { data: session, isLoading } = useSession();
@@ -90,210 +92,234 @@ export default function Register() {
 
   const member = session?.member;
 
+  const BackButton = (
+    <button
+      type="button"
+      onClick={() => navigate(-1)}
+      aria-label="Back"
+      className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border text-muted-foreground transition hover:bg-muted sm:inline-flex"
+    >
+      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+    </button>
+  );
+
+  /* ---------------------------------------------------------------- */
+  /* Already have a profile: show the card itself, stamped with status */
+  /* ---------------------------------------------------------------- */
   if (member) {
     const pending = member.status === 'PENDING_APPROVAL';
     return (
-      <div className="flex min-h-screen flex-col bg-secondary/30">
-        <main className="mx-auto flex w-full max-w-2xl flex-1 items-center gap-4 px-4 py-16 sm:px-6">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            aria-label="Back"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <Card className="w-full rounded-2xl border-border/60 shadow-sm">
-            <CardHeader className="items-center text-center">
-              <div
-                className={
-                  'mb-1 grid size-16 place-items-center rounded-2xl ' +
-                  (pending ? 'bg-amber-500/10' : 'bg-emerald-500/10')
-                }
-              >
-                {pending ? (
-                  <Clock className="size-8 text-amber-600" aria-hidden="true" />
-                ) : (
-                  <CheckCircle2 className="size-8 text-emerald-600" aria-hidden="true" />
+      <div className="flex min-h-screen flex-col bg-muted/30">
+        <main className="mx-auto flex w-full max-w-xl flex-1 items-start gap-3 px-4 py-6 sm:items-center sm:gap-4 sm:px-6 sm:py-16">
+          {BackButton}
+          <div className="w-full rounded-none border-0 bg-transparent p-0 shadow-none sm:rounded-xl sm:border sm:bg-card sm:p-9 sm:shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Borrower card
+                </p>
+                <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
+                  {pending ? `Welcome, ${member.firstName}` : member.fullName}
+                </h1>
+                {member.matricNumber && (
+                  <p className="mt-1 text-sm text-muted-foreground">{member.matricNumber}</p>
                 )}
               </div>
-              <CardTitle className="font-display text-2xl tracking-tight">
-                {pending ? 'Awaiting librarian approval' : 'You are already a member'}
-              </CardTitle>
-              <CardDescription className="leading-relaxed">
-                {pending
-                  ? `Thanks ${member.firstName}. Your registration is in the approval queue — you will be able to borrow as soon as a librarian approves it.`
-                  : `Signed in as ${member.fullName}${member.matricNumber ? ` · ${member.matricNumber}` : ''}.`}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-wrap justify-center gap-3">
+              <span
+                className={
+                  'shrink-0 rounded-full px-3 py-1 text-xs font-medium ' +
+                  (pending
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-emerald-100 text-emerald-800')
+                }
+              >
+                {pending ? 'Pending' : 'Active'}
+              </span>
+            </div>
+
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              {pending
+                ? "Your application is in the librarian's queue. You'll be able to borrow as soon as it's approved."
+                : 'You already hold an active membership.'}
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
               {!pending && (
                 <Button
-                  className="h-12 rounded-full px-6 font-medium hover:brightness-110"
+                  className="h-11 flex-1 sm:flex-none sm:px-6"
                   onClick={() => navigate(member.role === 'ADMIN' ? '/admin/reports' : '/dashboard')}
                 >
                   Go to my area
                 </Button>
               )}
-              <Button
-                variant="outline"
-                className="h-12 rounded-full px-6 font-medium"
-                asChild
-              >
+              <Button variant="ghost" className="h-11" asChild>
                 <Link to="/about">About the library</Link>
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </main>
         <Footer />
       </div>
     );
   }
 
+  /* ---------------------------------------------------------------- */
+  /* The application itself: a simple, responsive registration form    */
+  /* ---------------------------------------------------------------- */
   const errors = form.formState.errors;
 
   return (
-    <div className="flex min-h-screen flex-col bg-secondary/30">
-      <main className="mx-auto flex w-full max-w-3xl flex-1 items-start gap-4 px-4 py-12 sm:px-6">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          aria-label="Back"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        </button>
-        <Card className="w-full rounded-2xl border-border/60 shadow-sm">
-          <CardHeader className="items-center text-center">
-            <div className="mb-1 grid size-16 place-items-center rounded-2xl bg-primary/10">
-              <UserPlus className="size-8 text-primary" aria-hidden="true" />
-            </div>
-            <CardTitle className="font-display text-2xl tracking-tight">
-              Register for library access
-            </CardTitle>
-            <CardDescription className="leading-relaxed">
-              Give us your academic details. New memberships start as pending and a librarian approves
-              them before you can borrow.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)} noValidate>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First name</Label>
-                  <Input
-                    id="firstName"
-                    className="h-11 rounded-xl"
-                    autoComplete="given-name"
-                    {...form.register('firstName')}
-                  />
-                  {errors.firstName && (
-                    <p className="text-sm text-destructive">{errors.firstName.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last name</Label>
-                  <Input
-                    id="lastName"
-                    className="h-11 rounded-xl"
-                    autoComplete="family-name"
-                    {...form.register('lastName')}
-                  />
-                  {errors.lastName && (
-                    <p className="text-sm text-destructive">{errors.lastName.message}</p>
-                  )}
-                </div>
-              </div>
+    <div className="flex min-h-screen flex-col bg-muted/30">
+      <main className="mx-auto flex w-full max-w-2xl flex-1 items-start gap-3 px-4 py-6 sm:gap-4 sm:px-6 sm:py-14">
+        {BackButton}
+        <div className="w-full rounded-none border-0 bg-transparent p-0 shadow-none sm:rounded-xl sm:border sm:bg-card sm:p-8 sm:shadow-sm">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Register for library access
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Give us your academic details. New memberships start pending and a librarian
+            approves them before you can borrow.
+          </p>
 
-              <div className="space-y-2">
-                <Label htmlFor="matricNumber">Matriculation number</Label>
+          <ol className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            {STEPS.map((step, index) => (
+              <li key={step} className="flex items-center gap-2">
+                <span
+                  className={
+                    'grid size-5 shrink-0 place-items-center rounded-full text-[10px] font-medium ' +
+                    (index === 0 ? 'bg-primary text-primary-foreground' : 'bg-muted')
+                  }
+                >
+                  {index + 1}
+                </span>
+                <span className={index === 0 ? 'font-medium text-foreground' : ''}>{step}</span>
+                {index < STEPS.length - 1 && <span className="mx-1 hidden sm:inline">→</span>}
+              </li>
+            ))}
+          </ol>
+
+          <form className="mt-7 space-y-5" onSubmit={form.handleSubmit(onSubmit)} noValidate>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="firstName">First name</Label>
                 <Input
-                  id="matricNumber"
-                  className="h-11 rounded-xl"
-                  placeholder="UJ/2021/CSC/1042"
-                  {...form.register('matricNumber')}
+                  id="firstName"
+                  className={fieldClass}
+                  autoComplete="given-name"
+                  {...form.register('firstName')}
                 />
-                {errors.matricNumber ? (
-                  <p className="text-sm text-destructive">{errors.matricNumber.message}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Format: UJ / year of entry / department code / serial number.
-                  </p>
+                {errors.firstName && (
+                  <p className="text-sm text-destructive">{errors.firstName.message}</p>
                 )}
               </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Select
-                    value={form.watch('department')}
-                    onValueChange={(value) =>
-                      form.setValue('department', value, { shouldValidate: true })
-                    }
-                  >
-                    <SelectTrigger id="department" className="h-11 rounded-xl">
-                      <SelectValue placeholder="Select your department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {DEPARTMENTS.map((dept) => (
-                        <SelectItem key={dept} value={dept}>
-                          {dept}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.department && (
-                    <p className="text-sm text-destructive">{errors.department.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="level">Level</Label>
-                  <Select
-                    value={form.watch('level')}
-                    onValueChange={(value) => form.setValue('level', value, { shouldValidate: true })}
-                  >
-                    <SelectTrigger id="level" className="h-11 rounded-xl">
-                      <SelectValue placeholder="Select your level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LEVELS.map((level) => (
-                        <SelectItem key={level} value={level}>
-                          {level}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.level && <p className="text-sm text-destructive">{errors.level.message}</p>}
-                </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="lastName">Last name</Label>
+                <Input
+                  id="lastName"
+                  className={fieldClass}
+                  autoComplete="family-name"
+                  {...form.register('lastName')}
+                />
+                {errors.lastName && (
+                  <p className="text-sm text-destructive">{errors.lastName.message}</p>
+                )}
               </div>
+            </div>
 
-              <div className="rounded-xl bg-secondary/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-                Your e-mail and password are handled by the university sign-in service — this form never
-                stores a password. {authed ? '' : 'You will be asked to sign in when you submit.'}
-              </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="matricNumber">Matriculation number</Label>
+              <Input
+                id="matricNumber"
+                className={fieldClass}
+                placeholder="UJ/2021/CSC/1042"
+                {...form.register('matricNumber')}
+              />
+              {errors.matricNumber ? (
+                <p className="text-sm text-destructive">{errors.matricNumber.message}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Format: UJ / year of entry / department code / serial number.
+                </p>
+              )}
+            </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Button
-                  type="submit"
-                  className="h-12 flex-1 rounded-full font-medium hover:brightness-110 sm:flex-none sm:px-8"
-                  disabled={register.isPending || isLoading}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="department">Department</Label>
+                <Select
+                  value={form.watch('department')}
+                  onValueChange={(value) =>
+                    form.setValue('department', value, { shouldValidate: true })
+                  }
                 >
-                  {register.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                      Submitting registration…
-                    </>
-                  ) : (
-                    'Submit registration'
-                  )}
-                </Button>
-                <Button type="button" variant="ghost" className="h-12 rounded-full font-medium" asChild>
-                  <Link to="/login">I already have an account</Link>
-                </Button>
+                  <SelectTrigger id="department" className={fieldClass}>
+                    <SelectValue placeholder="Select your department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DEPARTMENTS.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.department && (
+                  <p className="text-sm text-destructive">{errors.department.message}</p>
+                )}
               </div>
-            </form>
-          </CardContent>
-        </Card>
+              <div className="space-y-1.5">
+                <Label htmlFor="level">Level</Label>
+                <Select
+                  value={form.watch('level')}
+                  onValueChange={(value) => form.setValue('level', value, { shouldValidate: true })}
+                >
+                  <SelectTrigger id="level" className={fieldClass}>
+                    <SelectValue placeholder="Select your level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LEVELS.map((level) => (
+                      <SelectItem key={level} value={level}>
+                        {level}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.level && (
+                  <p className="text-sm text-destructive">{errors.level.message}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-md bg-muted px-4 py-2.5 text-xs leading-relaxed text-muted-foreground">
+              Your e-mail and password are handled by the university sign-in service — this
+              form never stores a password.
+              {!authed && ' You will be asked to sign in when you submit.'}
+            </div>
+
+            <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:gap-5">
+              <Button
+                type="submit"
+                className="h-12 w-full sm:w-auto sm:px-9"
+                disabled={register.isPending || isLoading}
+              >
+                {register.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                    Submitting registration…
+                  </>
+                ) : (
+                  'Submit registration'
+                )}
+              </Button>
+              <Link
+                to="/login"
+                className="text-center text-sm font-medium underline-offset-4 hover:underline sm:text-left"
+              >
+                I already have an account
+              </Link>
+            </div>
+          </form>
+        </div>
       </main>
       <Footer />
     </div>
