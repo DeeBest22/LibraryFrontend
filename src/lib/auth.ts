@@ -52,6 +52,23 @@ class RPApi {
     window.location.href = `${this.getBaseURL()}/api/v1/auth/login`;
   }
 
+  /** Username/password sign-in for the admin/librarian — bypasses OIDC.
+   *  Throws with a user-facing message on invalid credentials. */
+  async adminLogin(username: string, password: string): Promise<void> {
+    try {
+      const response = await this.client.post(`${this.getBaseURL()}/api/v1/auth/admin-login`, {
+        username,
+        password,
+      });
+      setToken(response.data.token);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        throw new Error('Incorrect username or password');
+      }
+      throw new Error('Unable to sign in right now. Please try again shortly.');
+    }
+  }
+
   async logout(): Promise<void> {
     try {
       const response = await this.client.get(`${this.getBaseURL()}/api/v1/auth/logout`);
